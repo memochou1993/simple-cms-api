@@ -6,65 +6,66 @@ const port = 3000;
 app.use(express.json());
 
 // 假資料
-let items = [
-  { id: 1, name: 'Item 1' },
-  { id: 2, name: 'Item 2' },
+const customers = [
+  { id: 1, name: 'Customer 1' },
+  { id: 2, name: 'Customer 2' },
 ];
 
+// 測試端點
 app.get('/api', (req, res) => {
-  res.json({ message: 'Hello, world!' });
+  res.json({ message: 'Hello, World!' });
 });
 
-// 取得所有項目
-app.get('/api/items', (req, res) => {
-  res.json(items);
+// 取得所有客戶端點
+app.get('/api/customers', (req, res) => {
+  res.json(customers);
 });
 
-// 取得單個項目
-app.get('/api/items/:id', (req, res) => {
-  const item = items.find(i => i.id === parseInt(req.params.id));
-  if (!item) {
-    return res.status(404).send('Item not found');
+// 取得單個客戶端點
+app.get('/api/customers/:id', (req, res) => {
+  const customer = customers.find(i => i.id === parseInt(req.params.id));
+  if (!customer) {
+    return res.status(404).send('Customer not found');
   }
 
-  res.json(item);
+  res.json(customer);
 });
 
-// 創建項目
-app.post('/api/items', (req, res) => {
-  const newItem = {
-    id: items.length + 1, // 建立簡單的 ID
+// 建立客戶端點
+app.post('/api/customers', (req, res) => {
+  const newCustomer = {
+    id: customers[customers.length - 1].id + 1,
     name: req.body.name,
   };
 
-  // 創建項目
-  items.push(newItem);
+  // 建立客戶
+  customers.push(newCustomer);
 
-  res.status(201).json(newItem);
+  res.status(201).json(newCustomer);
 });
 
-// 更新項目
-app.put('/api/items/:id', (req, res) => {
-  const item = items.find(i => i.id === parseInt(req.params.id));
-  if (!item) {
-    return res.status(404).send('Item not found');
+// 更新客戶端點
+app.put('/api/customers/:id', (req, res) => {
+  const customer = customers.find(i => i.id === parseInt(req.params.id));
+  if (!customer) {
+    return res.status(404).send('Customer not found');
   }
 
-  // 更新項目
-  item.name = req.body.name;
+  // 更新客戶
+  customer.name = req.body.name;
 
-  res.json(item);
+  res.json(customer);
 });
 
-// 刪除項目
-app.delete('/api/items/:id', (req, res) => {
-  const itemIndex = items.findIndex(i => i.id === parseInt(req.params.id));
-  if (itemIndex === -1) {
-    return res.status(404).send('Item not found');
+// 刪除客戶端點
+app.delete('/api/customers/:id', (req, res) => {
+  const customerIndex = customers.findIndex(i => i.id === parseInt(req.params.id));
+  if (customerIndex === -1) {
+    return res.status(404).send('Customer not found');
   }
 
-  // 刪除項目
-  items.splice(itemIndex, 1);
+  // 刪除客戶
+  customers.splice(customerIndex, 1);
 
   res.status(204).send();
 });
