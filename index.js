@@ -59,13 +59,13 @@ app.put('/api/customers/:id', (req, res) => {
 
 // 刪除客戶端點
 app.delete('/api/customers/:id', (req, res) => {
-  const customerIndex = customers.findIndex(i => i.id === parseInt(req.params.id));
-  if (customerIndex === -1) {
+  const index = customers.findIndex(i => i.id === parseInt(req.params.id));
+  if (index === -1) {
     return res.status(404).send('Customer not found');
   }
 
   // 刪除客戶
-  customers.splice(customerIndex, 1);
+  customers.splice(index, 1);
 
   res.status(204).send();
 });
