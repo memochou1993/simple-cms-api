@@ -7,8 +7,9 @@ app.use(express.json());
 
 // 假資料
 const customers = [
-  { id: 1, name: 'Customer 1' },
-  { id: 2, name: 'Customer 2' },
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { id: 3, name: 'Charlie' },
 ];
 
 // 測試端點
@@ -23,9 +24,12 @@ app.get('/api/customers', (req, res) => {
 
 // 取得單個客戶端點
 app.get('/api/customers/:id', (req, res) => {
-  const customer = customers.find(i => i.id === parseInt(req.params.id));
+  const id = parseInt(req.params.id);
+  const customer = customers.find(customer => customer.id === id);
   if (!customer) {
-    return res.status(404).send('Customer not found');
+    return res.status(404).json({
+      message: 'Customer not found',
+    });
   }
 
   res.json(customer);
@@ -33,22 +37,25 @@ app.get('/api/customers/:id', (req, res) => {
 
 // 建立客戶端點
 app.post('/api/customers', (req, res) => {
-  const newCustomer = {
-    id: customers[customers.length - 1].id + 1,
+  const customer = {
+    id: customers.length + 1,
     name: req.body.name,
   };
 
   // 建立客戶
-  customers.push(newCustomer);
+  customers.push(customer);
 
-  res.status(201).json(newCustomer);
+  res.status(201).json(customer);
 });
 
 // 更新客戶端點
 app.put('/api/customers/:id', (req, res) => {
-  const customer = customers.find(i => i.id === parseInt(req.params.id));
+  const id = parseInt(req.params.id);
+  const customer = customers.find(customer => customer.id === id);
   if (!customer) {
-    return res.status(404).send('Customer not found');
+    return res.status(404).json({
+      message: 'Customer not found',
+    });
   }
 
   // 更新客戶
@@ -59,9 +66,12 @@ app.put('/api/customers/:id', (req, res) => {
 
 // 刪除客戶端點
 app.delete('/api/customers/:id', (req, res) => {
-  const index = customers.findIndex(i => i.id === parseInt(req.params.id));
+  const id = parseInt(req.params.id);
+  const index = customers.findIndex(customer => customer.id === id);
   if (index === -1) {
-    return res.status(404).send('Customer not found');
+    return res.status(404).json({
+      message: 'Customer not found',
+    });
   }
 
   // 刪除客戶
