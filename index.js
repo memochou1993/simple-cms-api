@@ -1,16 +1,13 @@
 import express from 'express';
+import Collection from './collection.js';
 const app = express();
 const port = 3000;
 
 // 啟用 JSON 解析
 app.use(express.json());
 
-// 假資料
-const customers = [
-  { id: 1, name: 'Alice' },
-  { id: 2, name: 'Bob' },
-  { id: 3, name: 'Charlie' },
-];
+// 實例化集合
+const collection = new Collection('customers');
 
 // 測試端點
 app.get('/api', (req, res) => {
@@ -18,14 +15,15 @@ app.get('/api', (req, res) => {
 });
 
 // 取得所有客戶端點
-app.get('/api/customers', (req, res) => {
+app.get('/api/customers', async (req, res) => {
+  const customers = await collection.getItems();
   res.json(customers);
 });
 
 // 取得單個客戶端點
-app.get('/api/customers/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const customer = customers.find(customer => customer.id === id);
+app.get('/api/customers/:id', async (req, res) => {
+  const id = req.params.id;
+  const customer = await collection.getItem(id);
   if (!customer) {
     return res.status(404).json({
       message: 'Customer not found',
@@ -36,46 +34,44 @@ app.get('/api/customers/:id', (req, res) => {
 });
 
 // 建立客戶端點
-app.post('/api/customers', (req, res) => {
+app.post('/api/customers', async (req, res) => {
   const customer = {
-    id: customers.length + 1,
     name: req.body.name,
   };
 
-  // 建立客戶
-  customers.push(customer);
+  const id = await collection.addItem(customer);
+  customer.id = id;
 
   res.status(201).json(customer);
 });
 
 // 更新客戶端點
-app.put('/api/customers/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const customer = customers.find(customer => customer.id === id);
+app.put('/api/customers/:id', async (req, res) => {
+  const id = req.params.id;
+  const customer = await collection.getItem(id);
   if (!customer) {
     return res.status(404).json({
       message: 'Customer not found',
     });
   }
 
-  // 更新客戶
   customer.name = req.body.name;
+  await collection.updateItem(id, customer);
 
   res.json(customer);
 });
 
 // 刪除客戶端點
-app.delete('/api/customers/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const index = customers.findIndex(customer => customer.id === id);
-  if (index === -1) {
+app.delete('/api/customers/:id', async (req, res) => {
+  const id = req.params.id;
+  const customer = await collection.getItem(id);
+  if (!customer) {
     return res.status(404).json({
       message: 'Customer not found',
     });
   }
 
-  // 刪除客戶
-  customers.splice(index, 1);
+  await collection.removeItem(id);
 
   res.status(204).send();
 });
