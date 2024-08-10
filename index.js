@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import Collection from './collection.js';
@@ -6,6 +7,9 @@ const port = 3000;
 
 // 啟用 JSON 解析
 app.use(express.json());
+
+// 啟用 CORS 設定
+app.use(cors());
 
 // 實例化集合
 const collection = new Collection('customers');
