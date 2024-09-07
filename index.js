@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import Collection from './collection.js';
+import setupLogging from './logging.js';
 const app = express();
 const port = 3000;
 
@@ -10,6 +11,9 @@ app.use(express.json());
 
 // 啟用 CORS 設定
 app.use(cors());
+
+// 啟用日誌
+app.use(setupLogging(true));
 
 // 實例化集合
 const collection = new Collection('customers');
