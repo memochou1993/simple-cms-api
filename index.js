@@ -2,7 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import Collection from './collection.js';
-import setupLogging from './logging.js';
+import { loggingMiddleware } from './middleware/index.js';
 const app = express();
 const port = 3000;
 
@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 // 啟用日誌
-app.use(setupLogging(true));
+app.use(loggingMiddleware(true));
 
 // 實例化集合
 const collection = new Collection('customers');
