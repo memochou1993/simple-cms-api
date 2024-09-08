@@ -2,35 +2,33 @@ import cors from 'cors';
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { Collection } from './firebase/index.js';
-import { loggingMiddleware } from './middleware/index.js';
+import { authMiddleware, loggingMiddleware } from './middleware/index.js';
+
 const app = express();
 const port = 3000;
 
-// 啟用 JSON 解析
 app.use(express.json());
 
-// 啟用 CORS 設定
 app.use(cors());
 
-// 啟用日誌
 app.use(loggingMiddleware(true));
 
-// 實例化集合
 const collection = new Collection('customers');
 
-// 測試端點
 app.get('/api', (req, res) => {
   res.json({ message: 'Hello, World!' });
 });
 
-// 取得所有客戶端點
-app.get('/api/customers', async (req, res) => {
+app.get('/api/customers', [
+  authMiddleware,
+], async (req, res) => {
   const customers = await collection.getItems();
   res.json(customers);
 });
 
-// 取得單個客戶端點
-app.get('/api/customers/:id', async (req, res) => {
+app.get('/api/customers/:id', [
+  authMiddleware,
+], async (req, res) => {
   const id = req.params.id;
   const customer = await collection.getItem(id);
   if (!customer) {
@@ -42,8 +40,8 @@ app.get('/api/customers/:id', async (req, res) => {
   res.json(customer);
 });
 
-// 建立客戶端點
 app.post('/api/customers', [
+  authMiddleware,
   body('name').notEmpty().withMessage('Name is required').isString().withMessage('Name must be a string'),
 ], async (req, res) => {
   const errors = validationResult(req);
@@ -61,8 +59,8 @@ app.post('/api/customers', [
   res.status(201).json(customer);
 });
 
-// 更新客戶端點
 app.put('/api/customers/:id', [
+  authMiddleware,
   body('name').notEmpty().withMessage('Name is required').isString().withMessage('Name must be a string'),
 ], async (req, res) => {
   const errors = validationResult(req);
@@ -84,8 +82,9 @@ app.put('/api/customers/:id', [
   res.json(customer);
 });
 
-// 刪除客戶端點
-app.delete('/api/customers/:id', async (req, res) => {
+app.delete('/api/customers/:id', [
+  authMiddleware,
+], async (req, res) => {
   const id = req.params.id;
   const customer = await collection.getItem(id);
   if (!customer) {
@@ -99,7 +98,6 @@ app.delete('/api/customers/:id', async (req, res) => {
   res.status(204).send();
 });
 
-// 啟動伺服器
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

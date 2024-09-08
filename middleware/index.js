@@ -1,5 +1,7 @@
+import authMiddleware from './auth.js';
 import loggingMiddleware from './logging.js';
 
-export{
+export {
+  authMiddleware,
   loggingMiddleware,
 };
