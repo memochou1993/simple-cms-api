@@ -1,7 +1,7 @@
 import cors from 'cors';
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import Collection from './collection.js';
+import { Collection } from './firebase/index.js';
 import { loggingMiddleware } from './middleware/index.js';
 const app = express();
 const port = 3000;

@@ -1,14 +1,9 @@
-import { cert, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import path from 'path';
-
-initializeApp({
-  credential: cert(path.join(import.meta.dirname, 'serviceAccountKey.json')),
-});
+import app from './app.js';
 
 class Collection {
   constructor(collection) {
-    const db = getFirestore();
+    const db = getFirestore(app);
     this.collection = db.collection(collection);
   }
 
